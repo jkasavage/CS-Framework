@@ -24,35 +24,35 @@ class Forms
 	 * 
 	 * @var String
 	 */
-	private static $formName = "";
+	public $formName = "";
 
 	/**
 	 * Form ID
 	 * 
 	 * @var String
 	 */
-	private static $formID = "";
+	public $formID = "";
 
 	/**
 	 * Form Method
 	 * 
 	 * @var String
 	 */
-	private static $formMethod = "";
+	public $formMethod = "";
 
 	/**
 	 * Form Action
 	 * 
 	 * @var String
 	 */
-	private static $formAction = "";
+	public $formAction = "";
 
 	/**
 	 * Form Target
 	 * 
 	 * @var String
 	 */
-	private static $formTarget = "";
+	public $formTarget = "";
 
 	/**
 	 * Get Form Parameters on Init
@@ -90,18 +90,18 @@ class Forms
 	 * 
 	 * @return String
 	 */
-	public static function CSFormStart()
+	public function CSFormStart()
 	{
 		$formStart = '<form ';
 
-		if(self::$formName) {
-			$formStart .= 'name="' . self::formName . '" method="' . self::formMethod . '" action="' . self::formAction . '" ';
-		} else if(self::formID) {
-			$formStart .= 'id="' . self::formID . '" method="' . self::formMethod . '" action="' . self::formAction . '" ';
+		if($this->formName) {
+			$formStart .= 'name="' . $this->formName . '" method="' . $this->formMethod . '" action="' . $this->formAction . '" ';
+		} else if($this->formID) {
+			$formStart .= 'id="' . $this->formID . '" method="' . $this->formMethod . '" action="' . $this->formAction . '" ';
 		}
 
-		if(self::formTarget != NULL) {
-			$formStart .= 'target="' . self::formTarget . '">';
+		if($this->formTarget != NULL) {
+			$formStart .= 'target="' . $this->formTarget . '">';
 		} else {
 			$formStart .= '>';
 		}
@@ -148,9 +148,9 @@ class Forms
 	{
 		$input = '<input type="' . $param["type"] . '" ';
 
-		if($param["name"]) {
+		if(isset($param["name"])) {
 			$input .= 'name="' . $param["name"] . '" ';
-		} else if($param["id"]) {
+		} else {
 			$input .= 'id="' . $param["id"] . '" ';
 		}
 
