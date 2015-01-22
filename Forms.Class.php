@@ -24,38 +24,38 @@ class Forms
 	 * 
 	 * @var String
 	 */
-	private $formName = "";
+	private static $formName = "";
 
 	/**
 	 * Form ID
 	 * 
 	 * @var String
 	 */
-	private $formID = "";
+	private static $formID = "";
 
 	/**
 	 * Form Method
 	 * 
 	 * @var String
 	 */
-	private $formMethod = "";
+	private static $formMethod = "";
 
 	/**
 	 * Form Action
 	 * 
 	 * @var String
 	 */
-	private $formAction = "";
+	private static $formAction = "";
 
 	/**
 	 * Form Target
 	 * 
 	 * @var String
 	 */
-	private $formTarget = "";
+	private static $formTarget = "";
 
 	/**
-	 * Create FORM tag and add Attributes
+	 * Get Form Parameters on Init
 	 *
 	 * Usage: $formAttributes = array(
 	 * 		  	"name"=>"addMember",
@@ -64,34 +64,44 @@ class Forms
 	 * 		   	"target"=>"_blank"
 	 *   	  );
 	 *   	  
-	 *   	  echo $obj::CSFormStart($formAttributes);
+	 *   	  $obj = new Forms($formAttributes);
 	 *
 	 * 		  Allowed Parameters: name (String),
+	 * 		  					  id (String)
 	 * 		  					  method (String),
 	 * 		  					  action (String),
 	 * 		  					  target (String)
 	 * 
 	 * @param Array $form
 	 * 
-	 * @return String
 	 */
-	public static function CSFormStart(Array $form)
+	public function __construct(Array $form)
 	{
 		$this->formName = $form["name"];
 		$this->formMethod = $form["method"];
 		$this->formAction = $form["action"];
 		$this->formTarget = $form["target"] ? $form["target"] : NULL;
+	}
 
+	/**
+	 * Create FORM tag and add Attributes
+	 *
+	 * Usage: echo $obj::CSFormStart();
+	 * 
+	 * @return String
+	 */
+	public static function CSFormStart()
+	{
 		$formStart = '<form ';
 
-		if($this->formName) {
-			$formStart .= 'name="' . $this->formName . '" method="' . $this->formMethod . '" action="' . $this->formAction . '" ';
-		} else if($this->formID) {
-			$formStart .= 'id="' . $this->formID . '" method="' . $this->formMethod . '" action="' . $this->formAction . '" ';
+		if(self::$formName) {
+			$formStart .= 'name="' . self::formName . '" method="' . self::formMethod . '" action="' . self::formAction . '" ';
+		} else if(self::formID) {
+			$formStart .= 'id="' . self::formID . '" method="' . self::formMethod . '" action="' . self::formAction . '" ';
 		}
 
-		if($this->formTarget != NULL) {
-			$formStart .= 'target="' . $this->formTarget . '">';
+		if(self::formTarget != NULL) {
+			$formStart .= 'target="' . self::formTarget . '">';
 		} else {
 			$formStart .= '>';
 		}
@@ -413,6 +423,8 @@ class Forms
 			$textbox .= 'rows="' . $param["rows"] . '" ';
 		}
 
+		$textbox .= '></textarea>';
+
 		return '<label>' . $param["label"] . '</label><br /> ' . $textbox;
 	}
 
@@ -458,7 +470,7 @@ class Forms
 			}
 		}
 
-		$submit .= 'value="' . $param["value"] . '"';
+		$submit .= 'value="' . $param["value"] . '" />';
 	}
 
 	/**
