@@ -6,8 +6,8 @@ namespace CSF\Modules;
  * Exceptions - Club Systems Framework
  * Do NOT modify
  * 
- * Created by Joseph Kasavage
  * Copyright Club Systems 2015
+ * @author Joseph Kasavage
  */
 
 class Exceptions

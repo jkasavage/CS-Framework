@@ -10,14 +10,15 @@ namespace CSF\Modules;
  * 		  Example:
  * 		  	$obj->selectData(array("table"=>"table name", "columns"=>array("column1", "column2")))
  * 		  	    ->where(array("column", "value"))
- * 		  	    ->limit(10);
+ * 		  	    ->limit(10)
+ * 		  	    ->execute();
  * 
- * Created by Joseph Kasavage
  * Copyright Club Systems 2015
+ * @author Joseph Kasavage
  */
 
-require_once("./Config.Class.php");
-require_once("./Exceptions.Class.php");
+require_once("./CS-Framework/Config.Class.php");
+require_once("./CS-Framework/Exceptions.Class.php");
 
 class Data 
 {
@@ -61,17 +62,36 @@ class Data
 	 * 
 	 * @var integer
 	 */
-	private $counter = 0;
+	private $counter = 1;
+
+	/**
+	 * Database
+	 * @var String
+	 */
+	private $database = "";
+
+	/**
+	 * Server
+	 * 
+	 * @var String
+	 */
+	private $server = "";
 
 	/**
 	 * Class Constructor - Set Identifier and Site from Config.Class.php
+	 *
+	 * Usage: $obj = new Data("tableName");
+	 * 
+	 * @param String $database
 	 */
-	public function __construct() 
+	public function __construct($database)
 	{
-		$this->globals = new CSF\Config();
+		$this->globals = new Config();
+		$this->database = $database;
 
 		$this->data_ident =	$this->globals->getIdent();
 		$this->data_site = $this->globals->getSite();
+		$this->server = $this->globals->getServer();
 	}
 
 	/**
@@ -88,7 +108,7 @@ class Data
 	public function rawRequest($sql)
 	{
 		try {
-			$con = new PDO("mysql:host=$this->server;dbname=data$this->ident", $this->globals->getUser(), $this->globals->getPwd());
+			$con = new \PDO("mysql:host=$this->server;dbname=$this->database", $this->globals->getUser(), $this->globals->getPwd());
             $prep = $con->prepare($sql);
             $prep->execute();
 
@@ -109,7 +129,7 @@ class Data
             		break;
 
             	case 'SELECT':
-            		$data = $prep->fetch(PDO::FETCH_ASSOC);
+            		$data = $prep->fetch(\PDO::FETCH_ASSOC);
             		return $data;
             		break;
             }
@@ -131,7 +151,7 @@ class Data
 	public function rawRequestWithParam($sql, Array $param)
 	{
 		try {
-			$con = new PDO("mysql:host=$this->server;dbname=data$this->ident", $this->globals->getUser(), $this->globals->getPwd());
+			$con = new \PDO("mysql:host=$this->server;dbname=$this->database", $this->globals->getUser(), $this->globals->getPwd());
             $prep = $con->prepare($sql);
             $prep->execute($param);
 
@@ -150,7 +170,7 @@ class Data
             		break;
 
             	case 'SELECT':
-            		$data = $prep->fetch(PDO::FETCH_ASSOC);
+            		$data = $prep->fetch(\PDO::FETCH_ASSOC);
             		return $data;
             		break;
             }
@@ -160,12 +180,22 @@ class Data
 	}
 
 	/**
+	 * Check Builder - Debugging
+	 * 
+	 * @return String
+	 */
+	public function getBuilder()
+	{
+		return $this->builder;
+	}
+
+	/**
 	 * Create a Select SQL Statement
 	 *
 	 * Usage: $obj->selectData(array("table"=>"table name", "columns"=>array("column1", "column2")))
 	 * 		  If no columns are set the all (*) symbol will be used
 	 * 
-	 * @param  Array  $request [description]
+	 * @param  Array  $request
 	 * 
 	 * @return Void
 	 */
@@ -177,7 +207,6 @@ class Data
 
 		$this->buildType = "SELECT";
 
-		$requestCount = count($request);
 		$columnCount = count($request["columns"]);
 
 		$this->builder = "SELECT ";
@@ -196,7 +225,8 @@ class Data
 			}
 		}
 
-		$this->counter = 0;
+		$this->counter = 1;
+		return $this;
 	}
 
 	/**
@@ -210,6 +240,8 @@ class Data
 	 */
 	public function insertData(Array $request)
 	{
+		$this->counter = 1;
+
 		if(empty($request["table"])) {
 			Exceptions::SQLnoTableError();
 		}
@@ -222,7 +254,6 @@ class Data
 
 		$columnCount = count($request["columns"]);
 		$valueCount = count($request["values"]);
-		$counter = 0;
 
 		$this->builder .= "INSERT INTO " . $request["table"] . " (";
 
@@ -236,19 +267,30 @@ class Data
 			$this->counter++;
 		}
 
-		$this->counter = 0;
+		$this->counter = 1;
 
 		$this->builder .= ") VALUES (";
 
 		foreach($request["values"] as $val) {
 			if($this->counter === $valueCount) {
-				$this->builder .= $val . ")";
+				if(strpos($val, "()")) {
+					$this->builder .= $val . ')';
+				} else {
+					$this->builder .= '"' . $val . '")';
+				}
 			} else {
-				$this->builder .= $val . ", ";
+				if(strpos($val, "()")) {
+					$this->builder .= $val . ', ';
+				} else {
+					$this->builder .= '"' . $val . '", ';
+				}
 			}
+
+			$this->counter++;
 		}
 
-		$this->counter = 0;
+		$this->counter = 1;
+		return $this;
 	}
 
 	/**
@@ -272,20 +314,20 @@ class Data
 
 		$this->buildType = "UPDATE";
 
-		$columnCount = $request["columns"];
-		$valueCount = $request["values"];
-
-		//Exceptions Here
+		$columnCount = count($request["columns"]);
+		$valueCount = count($request["values"]);
 
 		$this->builder = "UPDATE " . $request["table"] . " SET ";
 
 		for($i=0; $i < $columnCount; $i++) {
-			if($i === $columnCount) {
-				$this->builder .= $col . "=" . $val;
+			if($i === $columnCount - 1) {
+				$this->builder .= $request["columns"][$i] . '="' . $request["values"][$i] . '" ';
 			} else {
-				$this->builder .= $col . "=" . $val . ", ";
+				$this->builder .= $request["columns"][$i] . '="' . $request["values"][$i] . '", ';
 			}
 		}
+
+		return $this;
 	}
 
 	/**
@@ -303,9 +345,11 @@ class Data
 			Exceptions::SQLnoTableError();
 		}
 
-		$this->buildType = "DELETE";
+		$this->buildType = 'DELETE';
 		
-		$this->builder .= "DELETE FROM " . $table;
+		$this->builder .= 'DELETE FROM ' . $table . ' ';
+
+		return $this;
 	}
 
 	/**
@@ -325,13 +369,21 @@ class Data
 
 		$requestCount = count($param);
 
+		$this->builder .= 'WHERE ';
+
+		$this->counter = 1;
+
 		foreach($param as $key=>$value) {
 			if($this->counter === $requestCount) {
-				$this->builder .= $key . "=" . $value;
+				$this->builder .= $key . '="' . $value . '" ';
 			} else {
-				$this->builder .= $key . "=" . $value . ", ";
+				$this->builder .= $key . '="' . $value . '", ';
 			}
+
+			$this->counter++;
 		}
+
+		return $this;
 	}
 
 	/**
@@ -339,17 +391,29 @@ class Data
 	 *
 	 * Usage: $obj->limit(5);
 	 * 
-	 * @param  Integer $val
+	 * @param  Array $values
 	 * 
 	 * @return Void
 	 */
-	public function limit($val)
+	public function limit(Array $values)
 	{
-		if(!$val) {
-			Execeptions::SQLlimitMissingInt();
+		$valueCount = count($values);
+
+		if($valueCount > 2) {
+			Exceptions::SQLInvalidIntCount();
 		}
 
-		$this->builder .= "LIMIT " . $val;
+		if(empty($values)) {
+			Exceptions::SQLNoIntCount();
+		}
+
+		if($valueCount == 2) {
+			$this->builder .= "LIMIT " . $values[0] . ', ' . $values[1];
+		} else {
+			$this->builder .= "LIMIT " . $val;
+		}
+
+		return $this;
 	}
 
 	/**
@@ -360,7 +424,7 @@ class Data
 	public function execute()
 	{
 		try {
-			$con = new PDO("mysql:host=$this->server;dbname=data$this->ident", $this->globals->getUser(), $this->globals->getPwd());
+			$con = new \PDO("mysql:host=$this->server;dbname=$this->database", $this->globals->getUser(), $this->globals->getPwd());
 			$prep = $con->prepare($this->builder);
 			$prep->execute();
 
@@ -370,21 +434,26 @@ class Data
 				case "DELETE":
 					$check = $prep->rowCount();
 					if($check) {
+						$this->builder = "";
+						$this->buildType = "";
+						$this->counter = 0;
 						return true;
 					} else {
+						$this->builder = "";
+						$this->buildType = "";
+						$this->counter = 0;
 						return false;
 					}
 					break;
 
 				case "SELECT":
-					$data = $prep->fetch(PDO::FETCH_ASSOC);
+					$data = $prep->fetch(\PDO::FETCH_ASSOC);
+					$this->builder = "";
+					$this->buildType = "";
+					$this->counter = 0;
 					return $data;
 					break;
 			}
-
-			$this->builder = "";
-			$this->buildType = "";
-			$this->counter = 0;
 		} catch (PDOException $ex) {
 			Exceptions::SQLError($ex);
 		}

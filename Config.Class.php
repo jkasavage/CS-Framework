@@ -1,14 +1,14 @@
 <?php
 
-namespace CSF;
+namespace CSF\Modules;
 
 /**
  * Configuration File - Club Systems Framework
  * Ensure all variables are set to match session variables
  * (ie. private ident = $_SESSION["YOURVARIABLE"])
  *
- * Created by Joseph Kasavage
  * Copyright Club Systems 2015
+ * @author Joseph Kasavage
  */
 
 class Config
@@ -52,7 +52,7 @@ class Config
 	 */
 	public function getIdent() 
 	{
-		return self::ident;
+		return $this->ident;
 	}
 
 	/**
@@ -62,7 +62,7 @@ class Config
 	 */
 	public function getSite()
 	{
-		return self::site;
+		return $this->site;
 	}
 
 	/**
@@ -72,7 +72,7 @@ class Config
 	 */
 	public function getUser()
 	{
-		return self::user;
+		return $this->user;
 	}
 
 	/**
@@ -82,6 +82,22 @@ class Config
 	 */
 	public function getPwd()
 	{
-		return self::pwd;
+		return $this->pwd;
+	}
+
+	/**
+	 * Get Server
+	 * 
+	 * @return String
+	 */
+	public function getServer()
+	{
+		$host = explode(".", $_SERVER["HTTP_HOST"]);
+
+		if($host[1] == "v2kpro") {
+			return '172.16.238.23';
+		} else {
+			return 'localhost';
+		}
 	}
 }

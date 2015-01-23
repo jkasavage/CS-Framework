@@ -15,8 +15,8 @@ namespace CSF\Modules;
  * 		  echo $obj::CSSubmit();
  * 		  echo $obj::CSFormEnd();
  * 
- * Created by Joseph Kasavage
  * Copyright Club Systems 2015
+ * @author Joseph Kasavage
  */
 
 class Forms
