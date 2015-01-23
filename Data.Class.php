@@ -10,7 +10,7 @@ namespace CSF\Modules;
  * 		  Example:
  * 		  	$obj->selectData(array("table"=>"table name", "columns"=>array("column1", "column2")))
  * 		  	    ->where(array("column", "value"))
- * 		  	    ->limit(10)
+ * 		  	    ->limit(array(5))
  * 		  	    ->execute();
  * 
  * Copyright Club Systems 2015
@@ -389,7 +389,7 @@ class Data
 	/**
 	 * Append LIMIT clause to SQL Statement
 	 *
-	 * Usage: $obj->limit(5);
+	 * Usage: $obj->limit(array(5)); OR $obj->limit(array(5,10));
 	 * 
 	 * @param  Array $values
 	 * 
