@@ -3,41 +3,41 @@
 /**
  * Configuration File - Club Systems Framework
  * Ensure all variables are set to match session variables
- * (ie. const ident = $_SESSION["YOURVARIABLE"])
+ * (ie. private ident = $_SESSION["YOURVARIABLE"])
  *
  * Created by Joseph Kasavage
  * Copyright Club Systems 2015
  */
 
-class Config 
+class Config
 {
 	/**
 	 * Customer Identity
 	 * 
 	 * @var String
 	 */
-	private $ident = $_SESSION["csysident"];
+	private $ident = 00;
 
 	/**
 	 * Customer Site
 	 * 
 	 * @var Integer
 	 */
-	private $site = $_SESSION["csyssite"];
+	private $site = 0;
 
 	/**
 	 * User
 	 *
 	 * @var String
 	 */
-	private $user = "csuser";
+	private $user = "root";
 
 	/**
 	 * Password
 	 *
 	 * @var String
 	 */
-	private $pwd = "V@l!dat3";
+	private $pwd = "michael8";
 
 	########################################
 	# DO NOT MODIFY BELOW

@@ -15,6 +15,7 @@
  */
 
 require_once("./Config.Class.php");
+require_once("./Exceptions.Class.php");
 
 class Data 
 {
@@ -82,7 +83,7 @@ class Data
 	 * 
 	 * @return Boolean OR Array
 	 */
-	public function rawRequest(String $sql)
+	public function rawRequest($sql)
 	{
 		try {
 			$con = new PDO("mysql:host=$this->server;dbname=data$this->ident", $this->globals->getUser(), $this->globals->getPwd());
@@ -111,7 +112,7 @@ class Data
             		break;
             }
 		} catch (PDOException $ex) {
-			//Exception Class Here
+			Exceptions::SQLError($ex);
 		}
 	}
 
@@ -125,7 +126,7 @@ class Data
 	 * 
 	 * @return Boolean OR Array
 	 */
-	public function rawRequestWithParam(String $sql, Array $param)
+	public function rawRequestWithParam($sql, Array $param)
 	{
 		try {
 			$con = new PDO("mysql:host=$this->server;dbname=data$this->ident", $this->globals->getUser(), $this->globals->getPwd());
@@ -152,7 +153,7 @@ class Data
             		break;
             }
 		} catch (PDOException $ex) {
-			//Exception Class Here
+			Exceptions::SQLError($ex);
 		}
 	}
 
@@ -164,11 +165,13 @@ class Data
 	 * 
 	 * @param  Array  $request [description]
 	 * 
-	 * @return Null
+	 * @return Void
 	 */
 	public function selectData(Array $request)
 	{
-		//Exceptions Here
+		if(empty($request["table"])) {
+			Exceptions::SQLnoTableError();
+		}
 
 		$this->buildType = "SELECT";
 
@@ -201,11 +204,17 @@ class Data
 	 * 
 	 * @param  Array  $request
 	 * 
-	 * @return Null
+	 * @return Void
 	 */
 	public function insertData(Array $request)
 	{
-		//Exceptions Here
+		if(empty($request["table"])) {
+			Exceptions::SQLnoTableError();
+		}
+
+		if(count($request["columns"]) != count($request["values"])) {
+			Exceptions::SQLvalueMismatch();
+		}
 		
 		$this->buildType = "INSERT";
 
@@ -247,10 +256,18 @@ class Data
 	 * 
 	 * @param  Array  $request
 	 * 
-	 * @return Null
+	 * @return Void
 	 */
 	public function updateData(Array $request)
 	{
+		if(empty($request["table"])) {
+			Exceptions::SQLnoTableError();
+		}
+
+		if(count($request["columns"]) != count($request["values"])) {
+			Exceptions::SQLvalueMismatch();
+		}
+
 		$this->buildType = "UPDATE";
 
 		$columnCount = $request["columns"];
@@ -275,10 +292,15 @@ class Data
 	 * Usage: $obj->deleteData("table");
 	 * 
 	 * @param  String $table
-	 * @return Null
+	 * 
+	 * @return Void
 	 */
-	public function deleteData(String $table) 
+	public function deleteData($table) 
 	{
+		if(!$table) {
+			Exceptions::SQLnoTableError();
+		}
+
 		$this->buildType = "DELETE";
 		
 		$this->builder .= "DELETE FROM " . $table;
@@ -290,11 +312,14 @@ class Data
 	 * Usage: $obj->where(array("column"=>"value", "column2"=>"value2"));
 	 * 
 	 * @param  Array  $param
-	 * @return Null
+	 * 
+	 * @return Void
 	 */
 	public function where(Array $param)
 	{
-		//Exceptions Here
+		if(empty($param)) {
+			Exceptions::SQLmissingParams();
+		}
 
 		$requestCount = count($param);
 
@@ -313,10 +338,15 @@ class Data
 	 * Usage: $obj->limit(5);
 	 * 
 	 * @param  Integer $val
-	 * @return Null
+	 * 
+	 * @return Void
 	 */
-	public function limit(Integer $val)
+	public function limit($val)
 	{
+		if(!$val) {
+			Execeptions::SQLlimitMissingInt();
+		}
+
 		$this->builder .= "LIMIT " . $val;
 	}
 
@@ -354,7 +384,7 @@ class Data
 			$this->buildType = "";
 			$this->counter = 0;
 		} catch (PDOException $ex) {
-			//Exceptions Here
+			Exceptions::SQLError($ex);
 		}
 	}
 }
