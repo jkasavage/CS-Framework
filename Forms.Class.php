@@ -20,43 +20,7 @@
 class Forms
 {
 	/**
-	 * Form Name
-	 * 
-	 * @var String
-	 */
-	public $formName = "";
-
-	/**
-	 * Form ID
-	 * 
-	 * @var String
-	 */
-	public $formID = "";
-
-	/**
-	 * Form Method
-	 * 
-	 * @var String
-	 */
-	public $formMethod = "";
-
-	/**
-	 * Form Action
-	 * 
-	 * @var String
-	 */
-	public $formAction = "";
-
-	/**
-	 * Form Target
-	 * 
-	 * @var String
-	 */
-	public $formTarget = "";
-
-	/**
-	 * Get Form Parameters on Init
-	 *
+	 * Create FORM tag and add Attributes
 	 * Usage: $formAttributes = array(
 	 * 		  	"name"=>"addMember",
 	 * 		   	"method"=>"POST",
@@ -64,44 +28,30 @@ class Forms
 	 * 		   	"target"=>"_blank"
 	 *   	  );
 	 *   	  
-	 *   	  $obj = new Forms($formAttributes);
+	 *   	  $obj::CSFormStart($formAttributes);
 	 *
 	 * 		  Allowed Parameters: name (String),
 	 * 		  					  id (String)
 	 * 		  					  method (String),
 	 * 		  					  action (String),
 	 * 		  					  target (String)
-	 * 
-	 * @param Array $form
-	 * 
-	 */
-	public function __construct(Array $form)
-	{
-		$this->formName = $form["name"];
-		$this->formMethod = $form["method"];
-		$this->formAction = $form["action"];
-		$this->formTarget = $form["target"] ? $form["target"] : NULL;
-	}
-
-	/**
-	 * Create FORM tag and add Attributes
 	 *
-	 * Usage: echo $obj::CSFormStart();
+	 * @param Array $form
 	 * 
 	 * @return String
 	 */
-	public function CSFormStart()
+	public static function CSFormStart(Array $form)
 	{
 		$formStart = '<form ';
 
-		if($this->formName) {
-			$formStart .= 'name="' . $this->formName . '" method="' . $this->formMethod . '" action="' . $this->formAction . '" ';
-		} else if($this->formID) {
-			$formStart .= 'id="' . $this->formID . '" method="' . $this->formMethod . '" action="' . $this->formAction . '" ';
+		if(isset($form["name"])) {
+			$formStart .= 'name="' . $form["name"] . '" method="' . $form["method"] . '" action="' . $form["action"] . '" ';
+		} else if(isset($form["id"])) {
+			$formStart .= 'id="' . $form["id"] . '" method="' . $form["method"] . '" action="' . $form["action"] . '" ';
 		}
 
-		if($this->formTarget != NULL) {
-			$formStart .= 'target="' . $this->formTarget . '">';
+		if(isset($form["target"])) {
+			$formStart .= 'target="' . $form["target"] . '">';
 		} else {
 			$formStart .= '>';
 		}
@@ -154,29 +104,29 @@ class Forms
 			$input .= 'id="' . $param["id"] . '" ';
 		}
 
-		if($param["maxlength"]) {
+		if(isset($param["maxlength"])) {
 			$input .= 'maxlength="' . $param["maxlength"] . '" ';
 		}
 
-		if($param["size"]) {
+		if(isset($param["size"])) {
 			$input .= 'size="' . $param["size"] . '" ';
 		}
 
-		if($param["class"]) {
+		if(isset($param["class"])) {
 			$input .= 'class="' . $param["class"] . '" ';
 		}
 
-		if($param["events"]) {
+		if(isset($param["events"])) {
 			foreach($param["events"] as $key=>$value) {
-				$input .= $key . "=" . $value . " ";
+				$input .= $key . '="' . $value . '" ';
 			}
 		}
 
-		if($param["value"]) {
+		if(isset($param["value"])) {
 			$input .= 'value="' . $param["value"] . '">';
 		}
 
-		return '<label>' . $param["label"] . '</label><br />' . $input;
+		return '<label style="font-weight: bold;">' . $param["label"] . '</label><br />' . $input;
 	}
 
 	/**
@@ -216,43 +166,45 @@ class Forms
 	{
 		$select = '<select ';
 
-		if($param["id"]) {
+		if(isset($param["id"])) {
 			$select .= 'id="' . $param["id"] . '" ';
-		} else if($param["name"]) {
+		} else if(isset($param["name"])) {
 			$select .= 'name="' . $param["name"] . '" ';
 		}
 
-		if($param["size"]) {
+		if(isset($param["size"])) {
 			$select .= 'size="' . $param["size"] . '" ';
 		}
 
-		if($param["class"]) {
+		if(isset($param["class"])) {
 			$select .= 'class="' . $param["class"] . '"';
 		}
 
-		if($param["events"]) {
+		if(isset($param["events"])) {
 			foreach($param["events"] as $key=>$value) {
 				$select .= $key . '="' . $value . '" ';
 			}
 		}
 
-		if($param["multiple"]) {
+		if(isset($param["multiple"])) {
 			$select .= 'multiple ';
 		}
 
-		if($param["disabled"]) {
+		if(isset($param["disabled"])) {
 			$select .= 'disabled ';
 		}
 
 		$select .= '>';
 
-		foreach($param["options"] as $key=>$value) {
-			$select .= '<option id="' . $key . '">' . $value . '</option>';
+		if(isset($param["options"])) {
+			foreach($param["options"] as $key=>$value) {
+				$select .= '<option id="' . $key . '">' . $value . '</option>';
+			}
 		}
 
 		$select .= '</select>';
 
-		return '<label>' . $param["label"] . '</label><br />' . $select;
+		return '<label style="font-weight: bold;">' . $param["label"] . '</label><br />' . $select;
 	}
 
 	/**
@@ -260,7 +212,7 @@ class Forms
 	 *
 	 * Usage: $checkboxParam = array(
 	 * 						   	 "id"=>"thisCheckbox",
-	 * 						   	 "checked"=>"true",
+	 * 						   	 "checked"=>true
 	 * 						   );
 	 *
 	 * 		  echo $obj::CSCheckbox($checkboxParam);
@@ -282,33 +234,33 @@ class Forms
 	{
 		$checkbox = '<input type="checkbox" ';
 
-		if($param["id"]) {
+		if(isset($param["id"])) {
 			$checkbox .= 'id="' . $param["id"] . '"" ';
-		} else if($param["name"]) {
+		} else if(isset($param["name"])) {
 			$checkbox .= 'name="' . $param["name"] . '"" '; 
 		}
 
-		if($param["class"]) {
+		if(isset($param["class"])) {
 			$checkbox .= 'class="' . $param["class"] . '" ';
 		}
 
-		if($param["events"]) {
+		if(isset($param["events"])) {
 			foreach($param["events"] as $key=>$value) {
 				$checkbox .= $key . '="' . $value . '" ';
 			}
 		}
 
-		if($param["checked"]) {
+		if(!empty($param["checked"])) {
 			$checkbox .= 'checked ';
 		}
 
-		if($param["disabled"]) {
+		if(!empty($param["disabled"])) {
 			$checkbox .= 'disabled />';
 		} else {
-			$checked .= '/>';
+			$checkbox .= '/>';
 		}
 
-		return $checkbox . '<br />' . '<label>' . $param["label"] . '</label>';
+		return $checkbox . '<br />' . '<label style="font-weight: bold;">' . $param["label"] . '</label>';
 	}
 
 	/**
@@ -338,45 +290,45 @@ class Forms
 	{
 		$radio = '<input type="radio" ';
 
-		if($param["id"]) {
-			$radio .= 'id="' . $param["id"] . '"" ';
-		} else if($param["name"]) {
-			$radio .= 'name="' . $param["name"] . '"" ';
+		if(isset($param["id"])) {
+			$radio .= 'id="' . $param["id"] . '" ';
+		} else if(isset($param["name"])) {
+			$radio .= 'name="' . $param["name"] . '" ';
 		}
 
-		if($param["events"]) {
+		if(isset($param["events"])) {
 			foreach($param["events"] as $key=>$value) {
 				$radio .= $key . '="' . $value . '" ';
 			}
 		}
 
-		if($param["class"]) {
+		if(isset($param["class"])) {
 			$radio .= 'class="' . $param["class"] . '" ';
 		}
 
-		if($param["value"]) {
-			$radio .= 'value=' . $param["value"] . ' ';
+		if(isset($param["value"])) {
+			$radio .= 'value="' . $param["value"] . '" ';
 		}
 
-		if($param["checked"]) {
+		if(!empty($param["checked"])) {
 			$radio .= 'checked />';
 		} else {
 			$radio .= '/>';
 		}
 
-		return $radio . '<br />' . '<label>' . $param["label"] . '</label>';
+		return $radio . '<br />' . '<label style="font-weight: bold;">' . $param["label"] . '</label>';
 	}
 
 	/**
 	 * Create a Textarea Box with Parameters
 	 *
-	 * Usage: $submitParam = array(
-	 * 							"id"=>"next",
-	 * 							"value"=>"Submit",
-	 * 							"class"=>"btn btn-default submit"
+	 * Usage: $textboxParam = array(
+	 * 							"id"=>"textarea1",
+	 * 							"value"=>"Value!",
+	 * 							"label"=>"Textarea: "
 	 * 						);
 	 *
-	 * 		  echo $obj::CSSubmit($submitParam);
+	 * 		  echo $obj::CSTextArea($textboxParam);
 	 *
 	 * 		  Allowed Parameters: id (String),
 	 * 		  					  name (String),
@@ -395,37 +347,37 @@ class Forms
 	{
 		$textbox = '<textarea ';
 
-		if($param["id"]) {
+		if(isset($param["id"])) {
 			$textbox .= 'id="' . $param["id"] . '" ';
-		} else if($param["name"]) {
+		} else if(isset($param["name"])) {
 			$textbox .= 'name="' . $param["name"] . '" ';
 		}
 
-		if($param["class"]) {
+		if(isset($param["class"])) {
 			$textbox .= 'class="' . $param["class"] . '" ';
 		}
 
-		if($events) {
+		if(isset($param["events"])) {
 			foreach($param["events"] as $key=>$value) {
 				$textbox .= $key . '="' . $value . '" ';
 			}
 		}
 
-		if($param["value"]) {
-			$textbox .= 'value="' . $param["value"] . '"';
-		}
-
-		if($param["column"]) {
+		if(isset($param["column"])) {
 			$textbox .= 'cols="' . $param["columns"] . '" ';
 		}
 
-		if($param["rows"]) {
+		if(isset($param["rows"])) {
 			$textbox .= 'rows="' . $param["rows"] . '" ';
 		}
 
-		$textbox .= '></textarea>';
+		if(isset($param["value"])) {
+			$textbox .= '>' . $param["value"] . '</textarea>';
+		} else {
+			$textbox .= '></textarea>';
+		}
 
-		return '<label>' . $param["label"] . '</label><br /> ' . $textbox;
+		return '<label style="font-weight: bold;">' . $param["label"] . '</label><br /> ' . $textbox;
 	}
 
 	/**
@@ -437,7 +389,7 @@ class Forms
 	 * 							"class"=>"btn btn-default submit"
 	 * 						);
 	 *
-	 * 		  echo $obj::CSSubmit($submitParam);
+	 * 		  echo $obj::CSButtonSubmit($submitParam);
 	 *
 	 * 		  Allowed Parameters: id (String),
 	 * 		  					  name (String),
@@ -450,27 +402,29 @@ class Forms
 	 *
 	 * @return String
 	 */
-	public static function CSSubmit(Array $param)
+	public static function CSButtonSubmit(Array $param)
 	{
 		$submit = '<input type="submit" ';
 
-		if($param["id"]) {
+		if(isset($param["id"])) {
 			$submit .= 'id="' . $param["id"] . '" ';
-		} else if($param["name"]) {
+		} else if(isset($param["name"])) {
 			$submit .= 'name="' . $param["name"] .  '"';
 		}
 
-		if($param["class"]) {
+		if(isset($param["class"])) {
 			$submit .= 'class="' . $param["class"] . '" ';
 		}
 
-		if($param["events"]) {
+		if(isset($param["events"])) {
 			foreach($param["events"] as $key=>$value) {
 				$submit .= $key . '="' . $value . '" ';
 			}
 		}
 
 		$submit .= 'value="' . $param["value"] . '" />';
+
+		return $submit;
 	}
 
 	/**
