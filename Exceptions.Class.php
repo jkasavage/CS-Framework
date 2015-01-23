@@ -1,5 +1,7 @@
 <?php
 
+namespace CSF\Modules;
+
 /**
  * Exceptions - Club Systems Framework
  * Do NOT modify

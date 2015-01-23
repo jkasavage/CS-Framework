@@ -1,5 +1,7 @@
 <?php
 
+namespace CSF;
+
 /**
  * Configuration File - Club Systems Framework
  * Ensure all variables are set to match session variables

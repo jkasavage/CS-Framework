@@ -1,5 +1,7 @@
 <?php
 
+namespace CSF\Modules;
+
 /**
  * Forms Class - Club Systems Framework
  * Do NOT modify

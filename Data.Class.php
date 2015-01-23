@@ -1,5 +1,7 @@
 <?php
 
+namespace CSF\Modules;
+
 /**
  * Data Abstraction Layer - Club Systems Framework
  * Do NOT modify
@@ -66,7 +68,7 @@ class Data
 	 */
 	public function __construct() 
 	{
-		$this->globals = new Config();
+		$this->globals = new CSF\Config();
 
 		$this->data_ident =	$this->globals->getIdent();
 		$this->data_site = $this->globals->getSite();
