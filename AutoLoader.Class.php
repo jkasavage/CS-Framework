@@ -20,6 +20,13 @@ class AutoLoader
 	private $_namespace = 'CSF\Modules';
 	private $_path = '/CS-Framework/';
 	private $_seperator = '\\';
+	private $_classes = array(
+								"Config",
+								"Data",
+								"Exceptions",
+								"Forms",
+								"Validate"
+							);
 
 	/**
 	 * Get Extension
@@ -109,6 +116,10 @@ class AutoLoader
 		$class = substr($className, strlen($this->_namespace.$this->_seperator), strlen($className));
 		$file = $this->_path . $class . $this->_ext;
 
-		require($file);
+		if(in_array($class, $this->_classes)) {
+			require($file);
+		} else {
+			return false;
+		}
 	}
 }
