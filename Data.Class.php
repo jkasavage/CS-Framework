@@ -17,8 +17,11 @@ namespace CSF\Modules;
  * @author Joseph Kasavage
  */
 
-require_once("./CS-Framework/Config.Class.php");
-require_once("./CS-Framework/Exceptions.Class.php");
+// Start Auto Loader
+require_once("./CS-Framework/AutoLoader.Class.php");
+$auto = new AutoLoader();
+$auto->register();
+// End Auto Loader
 
 class Data 
 {
