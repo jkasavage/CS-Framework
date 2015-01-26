@@ -85,6 +85,7 @@ class Forms
 	 *
 	 * 		  Allowed Parameters: id (String),
 	 * 		     				  name (String),
+	 * 		     				  type (String),
 	 * 		     				  maxlength (String),
 	 * 		     				  size (String),
 	 * 		     				  class (String),
@@ -125,7 +126,9 @@ class Forms
 		}
 
 		if(isset($param["value"])) {
-			$input .= 'value="' . $param["value"] . '">';
+			$input .= 'value="' . $param["value"] . '" />';
+		} else {
+			$input .= ' />';
 		}
 
 		return '<label style="font-weight: bold;">' . $param["label"] . '</label><br />' . $input;
@@ -397,8 +400,7 @@ class Forms
 	 * 		  					  name (String),
 	 * 		  					  class (String),
 	 * 		  					  events (String),
-	 * 		  					  value (String),
-	 * 		  					  label (String)
+	 * 		  					  value (String)
 	 * 
 	 * @param Array $param
 	 *

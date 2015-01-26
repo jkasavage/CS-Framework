@@ -1,5 +1,7 @@
 <?php
 
+namespace CSF\Modules;
+
 /**
  * Auto Loader - Club Systems Framework
  * Do NOT modify
@@ -12,19 +14,12 @@
  * @author Joseph Kasavage
  */
 
-class CSAutoLoader
+class AutoLoader
 {
 	private $_ext = '.Class.php';
 	private $_namespace = 'CSF\Modules';
-	private $_path = '../CSFramework/';
+	private $_path = '/CS-Framework/';
 	private $_seperator = '\\';
-	private $_classes = array(
-								"Config",
-								"Data",
-								"Exceptions",
-								"Forms",
-								"Validate"
-							);
 
 	/**
 	 * Get Extension
@@ -112,12 +107,8 @@ class CSAutoLoader
 	public function load($className)
 	{
 		$class = substr($className, strlen($this->_namespace.$this->_seperator), strlen($className));
+		$file = $this->_path . $class . $this->_ext;
 
-		if(in_array($class, $this->_classes)) {
-			$file = $this->_path . $class . $this->_ext;
-			if(is_readable($file)) {
-				require($file);
-			}
-		}
+		require($file);
 	}
 }

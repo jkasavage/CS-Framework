@@ -17,12 +17,6 @@ namespace CSF\Modules;
  * @author Joseph Kasavage
  */
 
-// Start Auto Loader
-require_once("./CS-Framework/AutoLoader.Class.php");
-$auto = new AutoLoader();
-$auto->register();
-// End Auto Loader
-
 class Data 
 {
 	/**
@@ -210,12 +204,16 @@ class Data
 
 		$this->buildType = "SELECT";
 
-		$columnCount = count($request["columns"]);
+		$columnCount = 0;
+
+		if(isset($request["columns"])) {
+			$columnCount = count($request["columns"]);
+		}
 
 		$this->builder = "SELECT ";
 
 		if($columnCount === 0) {
-			$this->builder .= "* FROM " . $request["table"];
+			$this->builder .= "* FROM " . $request["table"] . ' ';
 		} else {
 			foreach($request["columns"] as $col) {
 				if($this->counter === $columnCount) {
@@ -413,7 +411,7 @@ class Data
 		if($valueCount == 2) {
 			$this->builder .= "LIMIT " . $values[0] . ', ' . $values[1];
 		} else {
-			$this->builder .= "LIMIT " . $val;
+			$this->builder .= "LIMIT " . $values[0];
 		}
 
 		return $this;
