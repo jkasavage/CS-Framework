@@ -21,7 +21,7 @@ class Exceptions
 	 */
 	public static function SQLError(PDOException $ex)
 	{
-		throw new Exception("SQL — Your request could not be completed due to the following error(s): <br />" . $ex->getMessage() . ' on  line ' . $ex->getLine() . '<br /><br />');
+		throw new \Exception("SQL — Your request could not be completed due to the following error(s): <br />" . $ex->getMessage() . ' on  line ' . $ex->getLine() . '<br /><br />');
 	}
 
 	/**
@@ -31,7 +31,7 @@ class Exceptions
 	 */
 	public static function SQLnoTableError()
 	{
-		throw new Exception("SQL — You must specify a table name in the given parameters!");
+		throw new \Exception("SQL — You must specify a table name in the given parameters!");
 	}
 
 	/**
@@ -41,7 +41,7 @@ class Exceptions
 	 */
 	public static function SQLvalueMismatch()
 	{
-		throw new Exception("SQL — The number of columns given do not match the number of values given!");
+		throw new \Exception("SQL — The number of columns given do not match the number of values given!");
 	}
 
 	/**
@@ -51,7 +51,7 @@ class Exceptions
 	 */
 	public static function SQLmissingParams()
 	{
-		throw new Exception("SQL — You must include columns and values!");
+		throw new \Exception("SQL — You must include columns and values!");
 	}
 
 	/**
@@ -61,6 +61,6 @@ class Exceptions
 	 */
 	public static function SQLlimitMissingInt()
 	{
-		throw new Exception("SQL — You must include an integer value when using the <b>limit</b> method!");
+		throw new \Exception("SQL — You must include an integer value when using the <b>limit</b> method!");
 	}
 }
