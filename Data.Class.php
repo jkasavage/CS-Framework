@@ -126,7 +126,7 @@ class Data
             		break;
 
             	case 'SELECT':
-            		$data = $prep->fetch(\PDO::FETCH_ASSOC);
+            		$data = $prep->fetchAll(\PDO::FETCH_ASSOC);
             		return $data;
             		break;
             }
@@ -167,7 +167,7 @@ class Data
             		break;
 
             	case 'SELECT':
-            		$data = $prep->fetch(\PDO::FETCH_ASSOC);
+            		$data = $prep->fetchAll(\PDO::FETCH_ASSOC);
             		return $data;
             		break;
             }
@@ -213,11 +213,11 @@ class Data
 		$this->builder = "SELECT ";
 
 		if($columnCount === 0) {
-			$this->builder .= "* FROM " . $request["table"] . ' ';
+			$this->builder .= "* FROM " . $request["table"] . " ";
 		} else {
 			foreach($request["columns"] as $col) {
 				if($this->counter === $columnCount) {
-					$this->builder .= $col . " FROM " . $request["table"];
+					$this->builder .= $col . " FROM " . $request["table"] . " ";
 				} else {
 					$this->builder .= $col . ", ";
 				}
@@ -448,7 +448,7 @@ class Data
 					break;
 
 				case "SELECT":
-					$data = $prep->fetch(\PDO::FETCH_ASSOC);
+					$data = $prep->fetchAll(\PDO::FETCH_ASSOC);
 					$this->builder = "";
 					$this->buildType = "";
 					$this->counter = 0;
