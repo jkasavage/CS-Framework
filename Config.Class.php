@@ -18,32 +18,41 @@ class Config
 	 * 
 	 * @var String
 	 */
-	private $ident = 00;
+	private $ident;
 
 	/**
 	 * Customer Site
 	 * 
 	 * @var Integer
 	 */
-	private $site = 0;
+	private $site;
 
 	/**
 	 * User
 	 *
 	 * @var String
 	 */
-	private $user = "root";
+	private $user = "csuser";
 
 	/**
 	 * Password
 	 *
 	 * @var String
 	 */
-	private $pwd = "michael8";
+	private $pwd = "zeroaliens";
 
 	########################################
 	# DO NOT MODIFY BELOW
 	########################################
+
+	/**
+	 * Construct
+	 */
+	public function __construct()
+	{
+		$this->ident = $_COOKIE["csysident"];
+		$this->site = $_COOKIE["csyssite"];
+	}
 
 	/**
 	 * Identity Getter
