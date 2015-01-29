@@ -1,5 +1,4 @@
 <?php
-
 namespace CSF\Modules;
 
 /**
@@ -92,6 +91,16 @@ class Data
 	}
 
 	/**
+	 * Set the Server to specific Host
+	 * 
+	 * @param String $server
+	 */
+	public function setServer($server)
+	{
+		$this->server = $server;
+	}
+
+	/**
 	 * Accept Raw SQL Requests without Parameters
 	 *
 	 * Usage: $obj->rawRequest("PUT QUERY HERE");
@@ -111,15 +120,21 @@ class Data
 
             $check = $prep->rowCount();
 
-            $type = split(" ", $sql);
+            $type = explode(" ", $sql);
 
             switch($type[0]) {
             	case 'UPDATE':
             	case 'DELETE':
             	case 'INSERT':
             		if($check) {
+            			$this->builder = "";
+						$this->buildType = "";
+						$this->counter = 0;
             			return true;
             		} else {
+            			$this->builder = "";
+						$this->buildType = "";
+						$this->counter = 0;
             			return false;
             		}
 
@@ -127,6 +142,9 @@ class Data
 
             	case 'SELECT':
             		$data = $prep->fetchAll(\PDO::FETCH_ASSOC);
+            		$this->builder = "";
+					$this->buildType = "";
+					$this->counter = 0;
             		return $data;
             		break;
             }
@@ -159,8 +177,14 @@ class Data
             	case 'DELETE':
             	case 'INSERT':
             		if($check) {
+            			$this->builder = "";
+						$this->buildType = "";
+						$this->counter = 0;
             			return true;
             		} else {
+            			$this->builder = "";
+						$this->buildType = "";
+						$this->counter = 0;
             			return false;
             		}
 
@@ -168,6 +192,9 @@ class Data
 
             	case 'SELECT':
             		$data = $prep->fetchAll(\PDO::FETCH_ASSOC);
+            		$this->builder = "";
+					$this->buildType = "";
+					$this->counter = 0;
             		return $data;
             		break;
             }
@@ -457,6 +484,55 @@ class Data
 			}
 		} catch (PDOException $ex) {
 			Exceptions::SQLError($ex);
+		}
+	}
+
+	/**
+	 * Execute Select Query on all Servers
+	 * 
+	 * @return Array
+	 */
+	public function executeAll()
+	{
+		$servers = array(
+						"172.16.238.23",
+						"172.16.238.188",
+						"172.16.230.54",
+						"172.16.238.222",
+						"172.16.238.154",
+						"172.16.238.88",
+						"172.16.227.119",
+						"172.16.238.19",
+						"64.40.98.79"
+					);
+
+		$host = explode(".", $_SERVER["HTTP_HOST"]);
+
+		if($host[0] != "healthclubsystems") {
+			Exceptions::SQLexecuteAllWrongSite();
+		} else {
+			$collection = array();
+
+			for($i=0; $i < count($servers); $i++) {
+				try {
+					$con = new \PDO("mysql:host=" . $servers[$i] . ";dbname=" . $this->database, $this->globals->getUser(), $this->globals->getPwd());
+					$prep = $con->prepare($this->builder);
+					$prep->execute();
+
+					$getData = $prep->fetchAll(\PDO::FETCH_ASSOC);
+
+					if($getData) {
+						$getData["LOCATION"] = $servers[$i];
+						$collection = array_merge($getData, $collection);
+					}
+				 } catch(PDOException $ex) {
+				 	Exceptions::SQLError($ex);
+				 }
+			}
+			$this->builder = "";
+			$this->buildType = "";
+			$this->counter = 0;
+			return $collection;
 		}
 	}
 }

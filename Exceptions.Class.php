@@ -63,4 +63,14 @@ class Exceptions
 	{
 		throw new \Exception("SQL — You must include an integer value when using the <b>limit</b> method!");
 	}
+
+	/**
+	 * Alert dev that you can not use Data::executeAll() on any server except HCS
+	 *
+	 * @return Exception
+	 */
+	public static function SQLexecuteAllWrongSite()
+	{
+		throw new \Exception("SQL — You can not use this method on this server!");
+	}
 }
