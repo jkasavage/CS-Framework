@@ -50,8 +50,10 @@ class Config
 	 */
 	public function __construct()
 	{
-		$this->ident = $_COOKIE["csysident"];
-		$this->site = $_COOKIE["csyssite"];
+		if(isset($_COOKIE["csysident"]) && isset($_COOKIE["csyssite"])) {
+			$this->ident = $_COOKIE["csysident"];
+			$this->site = $_COOKIE["csyssite"];
+		}
 	}
 
 	/**
@@ -101,14 +103,16 @@ class Config
 	 */
 	public function getServer()
 	{
-		$host = explode(".", $_SERVER["HTTP_HOST"]);
+		if(isset($_SERVER["HTTP_HOST"])) {
+			$host = explode(".", $_SERVER["HTTP_HOST"]);
 
-		if($host[1] == "v2kpro") {
-			return '172.16.238.23';
-		} else if ($host[1] == "healthclubsystems") {
-			return $_COOKIE["csysserver"];
-		} else {
-			return 'localhost';
+			if($host[0] == "v2kpro") {
+				return '172.16.238.23';
+			} else if ($host[1] == "healthclubsystems") {
+				return $_COOKIE["csysserver"];
+			} else {
+				return 'localhost';
+			}
 		}
 	}
 }
