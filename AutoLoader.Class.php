@@ -18,7 +18,7 @@ class AutoLoader
 {
 	private $_ext = '.Class.php';
 	private $_namespace = 'CSF\Modules';
-	private $_path = '/CS-Framework/';
+	private $_path = './CS-Framework/';
 	private $_seperator = '\\';
 	private $_classes = array(
 								"Config",
@@ -117,7 +117,12 @@ class AutoLoader
 		$file = $this->_path . $class . $this->_ext;
 
 		if(in_array($class, $this->_classes)) {
-			require($file);
+			if(file_exists($file)) {
+				require($file);
+			} else {
+				$newFile = "../CS-Framework/" . $class . ".Class.php"; 
+				require($newFile);
+			}
 		} else {
 			return false;
 		}
