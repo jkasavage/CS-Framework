@@ -108,7 +108,7 @@ class Config
 
 			if($host[0] == "v2kpro") {
 				return '172.16.238.23';
-			} else if ($host[1] == "healthclubsystems") {
+			} else if ($host[0] == "healthclubsystems") {
 				return $_COOKIE["csysserver"];
 			} else {
 				return 'localhost';
